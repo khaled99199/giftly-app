@@ -1,74 +1,47 @@
-'use client'
-import React, { useState } from 'react'
+"use client";
 
-const mockGifts = [
-  { id: 1, name: 'سوار ذهبي بسيط', image: 'https://via.placeholder.com/150' },
-  { id: 2, name: 'قلادة حجر كريم', image: 'https://via.placeholder.com/150' },
-  { id: 3, name: 'خاتم فضي أنيق', image: 'https://via.placeholder.com/150' }
-]
+import Image from "next/image";
+import { useState } from "react";
+
+type Gift = {
+  id: number;
+  name: string;
+  image: string;
+};
 
 export default function Home() {
-  const [selectedGift, setSelectedGift] = useState(null)
-  const [step, setStep] = useState<'select' | 'address' | 'done'>('select')
-  const [address, setAddress] = useState('')
+  const gifts: Gift[] = [
+    { id: 1, name: "سنسال", image: "/s1.png" },
+    { id: 2, name: "اسوارة", image: "/s2.png" },
+    { id: 3, name: "خاتم", image: "/s3.png" },
+  ];
 
-  const handleSubmit = () => {
-    if (selectedGift && address) {
-      setStep('done')
-    }
-  }
+  const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      {step === 'select' && (
-        <div>
-          <h2 className="text-2xl mb-4">🎁 اختر هديتك</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {mockGifts.map((gift) => (
-              <div
-                key={gift.id}
-                className={`border p-2 rounded cursor-pointer ${
-                  selectedGift?.id === gift.id ? 'border-blue-500' : ''
-                }`}
-                onClick={() => setSelectedGift(gift)}
-              >
-                <img src={gift.image} alt={gift.name} className="w-full h-24 object-cover mb-2" />
-                <div className="text-center">{gift.name}</div>
-              </div>
-            ))}
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-white text-black">
+      <h1 className="text-3xl font-bold mb-4">اختر هديتك 🎁</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {gifts.map((gift) => (
+          <div
+            key={gift.id}
+            className={`border p-2 rounded cursor-pointer hover:shadow-md ${
+              selectedGift?.id === gift.id ? "border-blue-500" : "border-gray-300"
+            }`}
+            onClick={() => setSelectedGift(gift)}
+          >
+            <Image src={gift.image} alt={gift.name} width={200} height={200} />
+            <p className="text-center mt-2 font-semibold">{gift.name}</p>
           </div>
-          <button
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-40"
-            disabled={!selectedGift}
-            onClick={() => setStep('address')}
-          >
-            التالي
-          </button>
+        ))}
+      </div>
+
+      {selectedGift && (
+        <div className="mt-6 text-center">
+          <p className="text-lg">🎉 لقد اخترت: {selectedGift.name}</p>
         </div>
       )}
-
-      {step === 'address' && (
-        <div>
-          <h2 className="text-2xl mb-4">📦 أدخل عنوان التوصيل</h2>
-          <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="اكتب عنوانك هنا..."
-            className="w-full p-2 border rounded mb-4"
-          />
-          <button
-            onClick={handleSubmit}
-            disabled={!address}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
-            تأكيد الطلب
-          </button>
-        </div>
-      )}
-
-      {step === 'done' && (
-        <div className="text-center text-xl">✅ تم استلام طلبك وسيتم التوصيل قريباً</div>
-      )}
-    </div>
-  )
+    </main>
+  );
 }
